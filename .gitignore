@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+*.log
+sessions.json
+settings.json
+credentials.json
+application_default_credentials.json
+runtime-artifacts/
+observations.private.json

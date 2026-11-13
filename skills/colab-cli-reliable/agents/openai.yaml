@@ -1,0 +1,13 @@
+interface:
+  display_name: Colab CLI 安定運用・CCU節約
+  short_description: CPU準備とGPU・TPU最適化、切断復旧でColabの総CCUを抑える
+  default_prompt: $colab-cli-reliable を使い、CPUでの準備・永続化からGPU/TPU実行、切断復旧、成果物検証と解放まで、品質と費用上限を守って進めて。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

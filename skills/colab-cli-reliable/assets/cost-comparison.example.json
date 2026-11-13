@@ -1,0 +1,64 @@
+{
+  "notes": "ALL DATA ARE FICTIONAL arithmetic examples. None of these rates, speeds, names, or quality assertions are observed Colab prices or benchmarks. Include every actual allocation segment when replacing them with evidence.",
+  "workload": "FICTIONAL example: produce 100 validated items from one fixed input",
+  "quality_target": "FICTIONAL example: all 100 items pass the same prescribed validator",
+  "required_valid_outputs": 100,
+  "candidates": [
+    {
+      "name": "FICTIONAL low hourly rate, long allocation",
+      "quality_passed": true,
+      "valid_outputs": 100,
+      "elapsed_seconds": 3600,
+      "allocation_segments": [
+        {
+          "runtime_id": "fictional-slow-runtime",
+          "start_seconds": 0,
+          "allocated_seconds": 3600,
+          "rate_cu_per_hour": 2,
+          "rate_source": "illustrative",
+          "rate_evidence": "Invented for arithmetic: 2 CU/hour for 3600 seconds = 2 CU. NOT a tariff."
+        }
+      ]
+    },
+    {
+      "name": "FICTIONAL higher hourly rate, shorter allocation",
+      "quality_passed": true,
+      "valid_outputs": 100,
+      "elapsed_seconds": 900,
+      "allocation_segments": [
+        {
+          "runtime_id": "fictional-fast-runtime",
+          "start_seconds": 0,
+          "allocated_seconds": 900,
+          "rate_cu_per_hour": 6,
+          "rate_source": "illustrative",
+          "rate_evidence": "Invented for arithmetic: 6 CU/hour for 900 seconds = 1.5 CU. NOT a tariff."
+        }
+      ]
+    },
+    {
+      "name": "FICTIONAL CPU preparation then accelerator",
+      "quality_passed": true,
+      "valid_outputs": 100,
+      "elapsed_seconds": 1200,
+      "allocation_segments": [
+        {
+          "runtime_id": "fictional-cpu-preparation-runtime",
+          "start_seconds": 0,
+          "allocated_seconds": 900,
+          "rate_cu_per_hour": 0.5,
+          "rate_source": "illustrative",
+          "rate_evidence": "Invented for arithmetic: preparation and durable upload cost 0.125 CU. NOT a CPU tariff or a free-CPU assumption."
+        },
+        {
+          "runtime_id": "fictional-new-accelerator-runtime",
+          "start_seconds": 900,
+          "allocated_seconds": 300,
+          "rate_cu_per_hour": 6,
+          "rate_source": "illustrative",
+          "rate_evidence": "Invented for arithmetic: fetch, setup, compute, verified export and release cost 0.5 CU. NOT a GPU/TPU tariff or a claim that staging always wins."
+        }
+      ]
+    }
+  ]
+}
