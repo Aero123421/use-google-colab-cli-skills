@@ -15,7 +15,7 @@ Accelerator execution is asynchronous. Use CUDA events or explicit synchronizati
 | CPU preprocessing or input wait | Preprocess/cache reusable work; tune workers, batched transforms and prefetch | Host RAM, shared memory, deterministic/random augmentation semantics |
 | Host-to-device copies | DataLoader pinned memory; supported asynchronous transfers; enough work to overlap | Pinned-memory budget, correct streams/lifetimes, actual overlap |
 | Many small kernels or host gaps | Larger useful batches, supported fusion/compilation, less frequent host metrics | Quality, memory headroom, compilation amortization |
-| Memory limit | Mixed precision, suitable physical batch, accumulation or activation recomputation | Numerical checks and full completion time |
+| Memory limit | Mixed precision, suitable physical batch, acumulation or activation recomputation | Numerical checks and full completion time |
 | Recompilation | Stable shapes, bounded length buckets, compatible persistent caches | Padding overhead and observed cache hits |
 | Durable I/O | Local working set, sharded writes, less frequent recovery checkpoints | Restoreability and acceptable replay window |
 
@@ -23,7 +23,7 @@ Tune one meaningful change at a time, retain the baseline and cap tuning CU. Hig
 
 ## Batch, precision and inference
 
-Increase the physical batch only while useful throughput improves and memory retains headroom. Preserve the intended effective batch and optimization behavior. Gradient accumulation can fit the target effective batch into memory, but extra microsteps can be slower; keep loss scaling, optimizer/scheduler steps and clipping correctly aligned. [AMP accumulation examples](https://docs.pytorch.org/docs/main/notes/amp_examples.html)
+Increase the physical batch only while useful throughput improves and memory retains headroom. Preserve the intended effective batch and optimization behavior. Gradient acumulation can fit the target effective batch into memory, but extra microsteps can be slower; keep loss scaling, optimizer/scheduler steps and clipping correctly aligned. [AMP acumulation examples](https://docs.pytorch.org/docs/main/notes/amp_examples.html)
 
 Try supported BF16/FP16 autocast with a numerical baseline; check finite loss, gradients and required validation/inference quality. Use the framework's appropriate scaling rules rather than converting every tensor with `.half()`. BF16 and FP16 do not have identical range or loss-scaling requirements. Verify the device supports the desired mode. [PyTorch AMP](https://docs.pytorch.org/docs/main/amp.html)
 

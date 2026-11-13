@@ -1,13 +1,13 @@
 ---
 name: colab-cli-reliable
-description: Operate the official Google Colab CLI reliably and minimize compute units (CU/CCU) for CPU, GPU and TPU jobs. Use for authentication, uploads, CPU-to-accelerator staging, Google Drive, training/inference performance, long jobs, disconnect recovery, concurrent agents and artifact retrieval. Colab CLIの安定運用・TPU活用・CCU節約。
+description: Operate the official Google Colab CLI reliably and minimize compute units (CU) for CPU, GPU and TPU jobs. Use for authentication, uploads, CPU-to-accelerator staging, Google Drive, training/inference performance, long jobs, disconnect recovery, concurrent agents and artifact retrieval. Colab CLIの安定運用・TPU活用・CU節約。
 ---
 
 # Reliable, economical Colab CLI
 
 Created: **2026-11-13T09:25:10Z** (18:25:10 JST; initial saved skill). Research reviewed: **2026-11-13**.
 
-Optimize **total CU to a verified result at the required quality and deadline**. Treat a runtime as disposable. CU and CCU refer to Colab compute units here.
+Optimize **total CU to a verified result at the required quality and deadline**. Treat a runtime as disposable. CU means Colab Compute Units throughout this skill.
 
 ## Before allocating
 
@@ -18,7 +18,7 @@ Optimize **total CU to a verified result at the required quality and deadline**.
 ## Use the accelerator efficiently
 
 4. Allocate only when inputs are ready. Inspect the actual device, memory, topology and framework/backend compatibility; reject unintended CPU fallback. Never assume a TPU device count. Stage the working set locally or stream shards with bounded prefetch; avoid training directly on many small Drive files.
-5. Run a bounded representative pilot. Include allocation, install, transfers, compilation, computation, evaluation and saving in cost; distinguish cold and warm timing and synchronize asynchronous work at measurement boundaries. Compare equal useful work at equal quality. Measure current rates; account-wide usage is not a per-job meter. Use [the local CU calculator](scripts/compare_ccu.py) when comparing recorded candidates.
+5. Run a bounded representative pilot. Include allocation, install, transfers, compilation, computation, evaluation and saving in cost; distinguish cold and warm timing and synchronize asynchronous work at measurement boundaries. Compare equal useful work at equal quality. Measure current rates; account-wide usage is not a per-job meter. Use [the local CU calculator](scripts/compare_cu.py) when comparing recorded candidates.
 6. Tune the bottleneck using [GPU guidance](references/gpu.md) or [TPU guidance](references/tpu.md). Stabilize shapes/buckets, choose a batch with memory headroom, overlap input work, and reduce host synchronizations. Test mixed precision against quality/NaN checks. Use compilation, cache reuse, distribution or recomputation only when their overhead pays back within this workload. Limit tuning expenditure.
 
 ## Run with recoverable evidence

@@ -47,7 +47,7 @@ Sources: [JAX JIT](https://docs.jax.dev/en/latest/jit-compilation.html), [JAX pe
 
 ## Choose precision and useful batch size
 
-Try supported BF16/mixed precision against a numerical baseline, retaining suitable precision for sensitive accumulations, reductions or optimizer state. Compare finite values, convergence and task-level quality. BF16 and FP16 do not share the same dynamic range/loss-scaling assumptions. A float32 storage dtype also does not guarantee identical internal matrix arithmetic across backends. [Google BF16](https://docs.cloud.google.com/tpu/docs/bfloat16) / [TensorFlow mixed precision](https://www.tensorflow.org/guide/mixed_precision) / [TorchTPU numerical precision](https://torchtpu.readthedocs.io/en/latest/numerical_precision/)
+Try supported BF16/mixed precision against a numerical baseline, retaining suitable precision for sensitive acumulations, reductions or optimizer state. Compare finite values, convergence and task-level quality. BF16 and FP16 do not share the same dynamic range/loss-scaling assumptions. A float32 storage dtype also does not guarantee identical internal matrix arithmetic across backends. [Google BF16](https://docs.cloud.google.com/tpu/docs/bfloat16) / [TensorFlow mixed precision](https://www.tensorflow.org/guide/mixed_precision) / [TorchTPU numerical precision](https://torchtpu.readthedocs.io/en/latest/numerical_precision/)
 
 Choose the per-device batch and matrix dimensions using actual device count, tiling behavior and memory headroom. Favor useful large tensor work without fixing a universal multiple or blindly filling all HBM. Check the effective batch, learning schedule, required updates and latency constraints. Internal padding and sharding can leave a nominally large global batch small on each device. [Google performance guide](https://docs.cloud.google.com/tpu/docs/performance-guide)
 
@@ -57,7 +57,7 @@ Activation recomputation trades extra calculation for memory. Use it when the re
 
 Preprocess reusable work on CPU, then supply local/streamed shards with parallel reads, batched transforms and bounded prefetch. Verify CPU and I/O can keep up. Bound host RAM use; caching after random augmentation can accidentally freeze augmentation. TensorFlow's `tf.data` guide explains the general pipeline tradeoffs. [Input pipeline performance](https://www.tensorflow.org/guide/data_performance)
 
-Avoid per-step tensor printing, NumPy conversion, `.item()`/`.cpu()` and host-side decisions that require device values. Accumulate metrics on device and retrieve them periodically. Preserve small progress updates at an interval compatible with the deadline/recovery policy. [JAX asynchronous dispatch](https://docs.jax.dev/en/latest/async_dispatch.html)
+Avoid per-step tensor printing, NumPy conversion, `.item()`/`.cpu()` and host-side decisions that require device values. Acumulate metrics on device and retrieve them periodically. Preserve small progress updates at an interval compatible with the deadline/recovery policy. [JAX asynchronous dispatch](https://docs.jax.dev/en/latest/async_dispatch.html)
 
 Where supported, execute several small steps per compiled call to reduce Python overhead. Limit grouping so cancellation, callbacks and progress do not become unresponsive. TensorFlow's `steps_per_execution` is one framework-specific example, usable only on a compatible runtime. [TensorFlow TPU guide](https://www.tensorflow.org/guide/tpu)
 

@@ -1,15 +1,15 @@
-# Google Colab CLI 安定運用・CCU節約スキル
+# Google Colab CLI 安定運用・CU節約スキル
 
 [English](README.md) · [スキル本体](skills/colab-cli-reliable/SKILL.md) · [MITライセンス](LICENSE)
 
 Google公式の **google-colab-cli** をAIエージェントから扱い、CPUでの準備、GPU／TPUでの計算、切断復旧、成果物回収、ランタイム解放までを一貫して運用するためのOSSスキルです。
 
-目標は **「必要な品質・件数・期限を満たす成果物までの総CCUを最小化する」** ことです。このリポジトリでは、CUとCCUはいずれもColabのcompute unitsを指します。Google公式スキルではなく、公式CLIを使うための独立したコミュニティプロジェクトです。
+目標は **「必要な品質・件数・期限を満たす成果物までの総CUを最小化する」** ことです。このリポジトリでは、CUをColabのCompute Units（計算ユニット）の略称として使います。Google公式スキルではなく、公式CLIを使うための独立したコミュニティプロジェクトです。
 
 - **作成日時：2026年11月13日 18:25:10 JST**（2026-11-13T09:25:10Z、初回保存時点）
 - **情報確認日：2026年11月13日**
 - 本体を短い12の規則にし、詳しい手順と変化しやすい情報を参照資料へ分離しています。
-- 本調査・検証のためにColabランタイムを割り当てたり、CCUを消費したりしていません。
+- 本調査・検証のためにColabランタイムを割り当てたり、CUを消費したりしていません。
 
 ## CPUでアップロードしてから切り替える際の注意
 
@@ -90,12 +90,12 @@ git clone https://github.com/Aero123421/use-google-colab-cli-skills.git
 
 依頼例：
 
-> colab-cli-reliableを使って、CPUでの準備からGPU／TPU実行まで進めて。品質条件と処理件数を守り、許可されたCCU・時間予算内で比較して、成果物を検証後にランタイムを解放して。
+> colab-cli-reliableを使って、CPUでの準備からGPU／TPU実行まで進めて。品質条件と処理件数を守り、許可されたCU・時間予算内で比較して、成果物を検証後にランタイムを解放して。
 
 ### CU比較ツール
 
 ```bash
-python3 skills/colab-cli-reliable/scripts/compare_ccu.py \
+python3 skills/colab-cli-reliable/scripts/compare_cu.py \
   --input skills/colab-cli-reliable/assets/cost-comparison.example.json \
   --max-cus 0.7 --deadline-seconds 1800 --json
 ```

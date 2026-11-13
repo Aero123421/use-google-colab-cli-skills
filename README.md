@@ -4,7 +4,7 @@
 
 An open-source agent skill for reliable, economical use of the **official Google Colab CLI**. It covers CPU preparation, GPU/TPU execution, Google Drive, disconnections, checkpoints and resource release.
 
-**Goal: minimize total Colab compute units to a verified result at the required quality and deadline.** CU and CCU both refer to Colab compute units in this project. This is an independent community project, not an official Google skill or a replacement CLI.
+**Goal: minimize total Colab compute units to a verified result at the required quality and deadline.** CU means Colab Compute Units throughout this project. This is an independent community project, not an official Google skill or a replacement CLI.
 
 - Skill created: **2026-11-13T09:25:10Z** / **2026-11-13 18:25:10 JST** (initial saved version).
 - Research reviewed: **2026-11-13**.
@@ -56,7 +56,7 @@ Example request:
 This standard-library script compares **supplied observations**. It does not connect to Colab, allocate resources, verify quality, discover tariffs or enforce a live spending cap.
 
 ```bash
-python3 skills/colab-cli-reliable/scripts/compare_ccu.py \
+python3 skills/colab-cli-reliable/scripts/compare_cu.py \
   --input skills/colab-cli-reliable/assets/cost-comparison.example.json \
   --max-cus 0.7 --deadline-seconds 1800 --json
 ```
@@ -73,7 +73,7 @@ python3 skills/colab-cli-reliable/scripts/compare_ccu.py \
 | [TPU](skills/colab-cli-reliable/references/tpu.md) | Topology, shapes, input pipelines, timing and optional CPU cross-compilation |
 | [CLI operations](skills/colab-cli-reliable/references/operations.md) | Dated CLI/authentication/disconnection investigation, in Japanese |
 | [Compatibility](skills/colab-cli-reliable/references/compatibility.md) | Dated CLI/framework support and migration notes |
-| [Tests](tests/test_compare_ccu.py) | Offline arithmetic, comparison gates and invalid-input checks |
+| [Tests](tests/test_compare_cu.py) | Offline arithmetic, comparison gates and invalid-input checks |
 
 Technical recommendations cite official Colab, Google Cloud, JAX, PyTorch and TensorFlow sources. Firsthand issues and community posts are labeled observations; they do not establish failure rates or guaranteed prices. Source research and local helper validation do not substitute for an authorized, representative test on the user's actual runtime.
 

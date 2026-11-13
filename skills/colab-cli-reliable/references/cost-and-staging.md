@@ -34,7 +34,7 @@ Set a CU ceiling, wall-clock deadline, small pilot/tuning allowance and response
 
 Hardware switching replaces the runtime. A Colab maintainer explicitly describes tearing down the old VM and creating a new one; current CLI `new` also allocates a new session. The CPU runtime's `/content`, installed packages and Python state are not a handoff mechanism. Sources: [maintainer explanation](https://github.com/googlecolab/colab-vscode/discussions/265), [CLI session implementation](https://github.com/googlecolab/google-colab-cli/blob/v0.8.0/src/colab_cli/commands/session.py).
 
-Use this sequence when preparation would otherwise occupy an expensive accelerator:
+Use this sequence when preparation would otherwise ocupy an expensive accelerator:
 
 1. **Prepare locally if possible.** Validate file formats, dimensions, counts, configuration and a small correctness case. Clean/tokenize/resize deterministically, create moderately sized shards, and record code/dependency/input hashes. Keep stochastic augmentation semantics intact.
 2. **Use Colab CPU only when useful.** It can perform preparation or upload to an already authorized durable destination. If the local machine can upload directly to Drive or another suitable store, skip this extra VM and transfer hop.
@@ -74,8 +74,8 @@ Release only after required artifacts are durable, or according to an agreed can
 Run the bundled standard-library helper from the skill directory:
 
 ```bash
-python3 scripts/compare_ccu.py --input assets/cost-comparison.example.json --json
-python3 scripts/compare_ccu.py --input observations.json --max-cus 1.5 --deadline-seconds 1800
+python3 scripts/compare_cu.py --input assets/cost-comparison.example.json --json
+python3 scripts/compare_cu.py --input observations.json --max-cus 1.5 --deadline-seconds 1800
 ```
 
 The included example has **fictional rates and durations**. Replace them with attributed observations. The helper neither queries Colab nor allocates, stops, benchmarks, validates model quality or enforces a live budget.

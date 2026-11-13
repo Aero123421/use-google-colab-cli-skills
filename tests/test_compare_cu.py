@@ -1,4 +1,4 @@
-"""Behavioral checks; set COLAB_CCU_SCRIPT to validate the installed skill copy."""
+"""Behavioral checks; set COLAB_CU_SCRIPT to validate the installed skill copy."""
 
 import importlib.util
 import json
@@ -10,11 +10,11 @@ import tempfile
 import unittest
 
 
-SCRIPT = Path(os.environ.get("COLAB_CCU_SCRIPT", str(
-    Path(__file__).resolve().parents[1] / "skills/colab-cli-reliable/scripts/compare_ccu.py")))
-SPEC = importlib.util.spec_from_file_location("compare_ccu", SCRIPT)
-CCU = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(CCU)
+SCRIPT = Path(os.environ.get("COLAB_CU_SCRIPT", str(
+    Path(__file__).resolve().parents[1] / "skills/colab-cli-reliable/scripts/compare_cu.py")))
+SPEC = importlib.util.spec_from_file_location("compare_cu", SCRIPT)
+CU = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(CU)
 
 
 def segment(runtime="a", start=0, seconds=1800, rate=2):
@@ -36,29 +36,29 @@ def document(*candidates):
 
 class ComparisonTests(unittest.TestCase):
     def test_arithmetic_and_per_output(self):
-        row = CCU.compare(document())["eligible"][0]
+        row = CU.compare(document())["eligible"][0]
         self.assertEqual(row["estimated_cu"], 1)
         self.assertEqual(row["cu_per_valid_output"], 0.1)
 
     def test_simultaneous_distinct_runtimes_are_summed(self):
         runtimes = [segment("cpu", seconds=1800, rate=2),
                     segment("gpu", seconds=900, rate=4)]
-        row = CCU.compare(document(candidate(segments=runtimes)))["eligible"][0]
+        row = CU.compare(document(candidate(segments=runtimes)))["eligible"][0]
         self.assertEqual(row["estimated_cu"], 2)
         self.assertEqual(row["elapsed_seconds"], 1800)
 
     def test_staged_preparation_is_included(self):
         stages = [segment("cpu", seconds=900, rate=2),
                   segment("gpu", start=900, seconds=900, rate=6)]
-        row = CCU.compare(document(candidate(segments=stages)))["eligible"][0]
+        row = CU.compare(document(candidate(segments=stages)))["eligible"][0]
         self.assertEqual(row["estimated_cu"], 2)
 
     def test_same_runtime_overlap_rejected_and_adjacent_rates_allowed(self):
         overlapping = [segment(seconds=900), segment(start=800, seconds=900)]
         with self.assertRaisesRegex(ValueError, "overlapping"):
-            CCU.compare(document(candidate(segments=overlapping)))
+            CU.compare(document(candidate(segments=overlapping)))
         adjacent = [segment(seconds=900, rate=2), segment(start=900, seconds=900, rate=4)]
-        self.assertEqual(CCU.compare(document(candidate(segments=adjacent)))[
+        self.assertEqual(CU.compare(document(candidate(segments=adjacent)))[
             "eligible"][0]["estimated_cu"], 1.5)
 
     def test_higher_hourly_rate_can_be_cheaper_and_fastest_can_differ(self):
@@ -67,14 +67,14 @@ class ComparisonTests(unittest.TestCase):
         cheapest = candidate("staged", 1200, segments=[
             segment("cpu", seconds=900, rate=0.5),
             segment("gpu", start=900, seconds=300, rate=6)])
-        result = CCU.compare(document(slow, fast, cheapest))
+        result = CU.compare(document(slow, fast, cheapest))
         self.assertEqual([r["name"] for r in result["eligible"]],
                          ["staged", "high rate", "low rate"])
         self.assertEqual(result["cheapest"], "staged")
         self.assertEqual(result["fastest"], "high rate")
 
     def test_quality_and_exact_output_count_gate(self):
-        result = CCU.compare(document(candidate("pass"), candidate("bad quality", quality=False),
+        result = CU.compare(document(candidate("pass"), candidate("bad quality", quality=False),
             candidate("too few", outputs=9), candidate("surplus", outputs=11),
             candidate("empty", outputs=0, quality=False)))
         self.assertEqual([r["name"] for r in result["eligible"]], ["pass"])
@@ -84,13 +84,13 @@ class ComparisonTests(unittest.TestCase):
         self.assertIsNone(result["excluded"][-1]["cu_per_valid_output"])
 
     def test_inclusive_budget_and_deadline(self):
-        self.assertEqual(CCU.compare(document(), max_cus=1, deadline_seconds=1800)["status"], "ok")
-        result = CCU.compare(document(), max_cus=0.99, deadline_seconds=1799)
+        self.assertEqual(CU.compare(document(), max_cus=1, deadline_seconds=1800)["status"], "ok")
+        result = CU.compare(document(), max_cus=0.99, deadline_seconds=1799)
         self.assertEqual(result["excluded"][0]["exclusion_reasons"],
                          ["cu_budget_exceeded", "deadline_exceeded"])
 
     def test_no_eligible_result_is_explicit(self):
-        result = CCU.compare(document(candidate(quality=False)))
+        result = CU.compare(document(candidate(quality=False)))
         self.assertEqual(result["status"], "no_eligible_candidates")
         self.assertEqual(result["eligible"], [])
         self.assertIsNone(result["cheapest"])
@@ -103,14 +103,14 @@ class ComparisonTests(unittest.TestCase):
                     data = document()
                     data["candidates"][0]["allocation_segments"][0][field] = invalid
                     with self.assertRaises(ValueError):
-                        CCU.compare(data)
+                        CU.compare(data)
         for field in ("valid_outputs", "elapsed_seconds"):
             for invalid in (float("nan"), -1, False):
                 with self.subTest(field=field, invalid=invalid):
                     data = document()
                     data["candidates"][0][field] = invalid
                     with self.assertRaises(ValueError):
-                        CCU.compare(data)
+                        CU.compare(data)
 
     def test_required_count_and_workload_target_are_explicit(self):
         for field, invalids in (("required_valid_outputs", (0, -1, True, 1.5)),
@@ -121,7 +121,7 @@ class ComparisonTests(unittest.TestCase):
                     data = document()
                     data[field] = invalid
                     with self.assertRaises(ValueError):
-                        CCU.compare(data)
+                        CU.compare(data)
 
     def test_evidence_and_intervals_are_required(self):
         invalid_documents = [document(candidate(segments=[])),
@@ -132,21 +132,21 @@ class ComparisonTests(unittest.TestCase):
             invalid_documents.append(data)
         for data in invalid_documents:
             with self.subTest(data=data), self.assertRaises(ValueError):
-                CCU.compare(data)
+                CU.compare(data)
 
     def test_zero_rate_with_explicit_evidence_is_allowed(self):
-        row = CCU.compare(document(candidate(segments=[segment(rate=0)])))["eligible"][0]
+        row = CU.compare(document(candidate(segments=[segment(rate=0)])))["eligible"][0]
         self.assertEqual(row["estimated_cu"], 0)
 
     def test_duplicate_names_and_non_boolean_quality_rejected(self):
         with self.assertRaisesRegex(ValueError, "duplicate"):
-            CCU.compare(document(candidate(), candidate()))
+            CU.compare(document(candidate(), candidate()))
         with self.assertRaisesRegex(ValueError, "boolean"):
-            CCU.compare(document(candidate(quality=1)))
+            CU.compare(document(candidate(quality=1)))
 
     def test_computed_overflow_rejected(self):
         with self.assertRaises(ValueError):
-            CCU.compare(document(candidate(elapsed=1e308,
+            CU.compare(document(candidate(elapsed=1e308,
                 segments=[segment(seconds=1e308, rate=1e308)])))
 
 
@@ -174,7 +174,7 @@ class CommandLineTests(unittest.TestCase):
             with self.subTest(text=text, args=args):
                 result = self.run_cli(text, *args)
                 self.assertEqual(result.returncode, 2)
-                parsed = json.loads(result.stdout, parse_constant=CCU.reject_constant)
+                parsed = json.loads(result.stdout, parse_constant=CU.reject_constant)
                 self.assertEqual(parsed["status"], "invalid_input")
 
     def test_shipped_fictional_example(self):
