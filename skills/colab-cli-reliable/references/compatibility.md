@@ -24,6 +24,10 @@ Verify the framework support matrix for the **actual TPU generation and software
 
 The current Cloud TPU software table lists TensorFlow **2.15+ on v5e/v5p/v6e using PJRT**, with API/feature differences from older generations; it explicitly excludes TensorFlow on **TPU7x**. This is a Cloud TPU compatibility table, not verification of a particular Colab image or a promise that consumer Colab exposes Cloud TPU VM image-selection flags. Do not assume either universal TensorFlow support or universal non-support on newer TPUs. [Cloud TPU versions and software](https://docs.cloud.google.com/tpu/docs/runtimes)
 
+## PyTorch AMP with compiled training
+
+The current PyTorch AMP documentation flags a separate compiled-backward autocast setting: `torch._functorch.config.backward_pass_autocast`. It describes a `"same_as_forward"` default and an `"off"` setting when backward executes outside autocast. This is version-sensitive behavior, not a flag to paste into every environment. Check the installed PyTorch version's documentation, align the compiled region with the actual forward/backward autocast contexts, and compare eager versus compiled losses/gradients before a long run. [PyTorch AMP documentation](https://docs.pytorch.org/docs/main/amp.html)
+
 ## Recheck at upgrade time
 
 - Confirm the package release and installed executable agree; review relevant merged changes rather than open PR examples.
