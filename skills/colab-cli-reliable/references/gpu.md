@@ -1,8 +1,10 @@
 # GPU work per compute unit
 
-Research reviewed: 2026-11-13. Apply only settings supported by the actual runtime, framework and model. No GPU model is universally cheapest.
+Research reviewed: 2026-11-13 (operational updates: 2026-11-16). Apply only settings supported by the actual runtime, framework and model. No GPU model is universally cheapest.
 
 ## Measure before changing settings
+
+Before launching a long GPU run, run a **short preflight** (about 10–20 seconds) that loads every required non-Python asset (fonts, binaries, system libraries, input paths—checking actual files/APIs rather than base package names alone) and executes a minimal **1-step forward/backward plus checkpoint save/restore** across all active models.
 
 Run a short representative pilot with the real input shapes and a defined quality threshold. Measure complete allocation cost and cold-start time separately from warmed throughput. Sample preprocessing, input waits, transfers, kernels, memory and checkpointing with a short profiler window. Remove profiling overhead for the final comparison. [PyTorch profiler](https://docs.pytorch.org/docs/main/profiler)
 
@@ -56,4 +58,7 @@ Do not call `empty_cache()` every batch as a generic speed optimization: it rele
 
 ## Stop at a verified result
 
-Use the same useful outputs and quality threshold for every comparison. Count tuning, failed attempts, evaluation and export in the overall budget. Persist the required result and resumable state, verify the copies, release the owned accelerator, then finish CPU-only plots or reporting. See [cost and staging](cost-and-staging.md).
+Use the same useful outputs and quality threshold for every comparison. Count tuning, failed attempts, evaluation and export in the overall budget.
+
+- **Persist before validating:** Emit final model weights, resumable checkpoints and SHA-256 manifests (splitting large artifacts into fixed-size chunks via [chunk_manifest.py](../scripts/chunk_manifest.py)) **immediately after training completes—before running optional downstream checks or test suites**. Even if a subsequent check fails or exits non-zero, rescue-download and verify completed weights before error handling or release.
+- **Keep CPU-bound export and target-CPU parity off the GPU:** Server CPUs on Colab VMs (for example, AVX-512 / AMX kernels) and target deployment CPUs can show minor floating-point rounding differences that reorder near-tied low-score items (such as background candidates in `TopK`) or slightly shift calibration statistics. Keep the GPU runtime focused on accelerator training plus minimal save verification, retrieve and verify the weights outside the VM, release the owned GPU, and run model/ONNX export, INT8 quantization calibration, strict CPU parity checks, full test suites and plotting/reporting on the deployment-target or local CPU. See [cost and staging](cost-and-staging.md) and [CLI operations](operations.md).
